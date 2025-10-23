@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aakriti 2025 Chatbot</title>
+    <!-- Load Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+        /* Custom scrollbar for chat window */
+        #chat-window::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat-window::-webkit-scrollbar-thumb {
+            background-color: #6d28d9;
+            border-radius: 10px;
+        }
+        #chat-window::-webkit-scrollbar-track {
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 sm:p-6 md:p-10">
+
+    <div class="w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[85vh]">
+        
+        <!-- Header -->
+        <header class="p-4 bg-purple-700 text-white shadow-lg rounded-t-2xl">
+            <h1 class="text-xl sm:text-2xl font-bold text-center">🤖 Aakriti 2025 Info Bot</h1>
+            <p class="text-sm text-center opacity-90">Canara Engineering College</p>
+        </header>
+
+        <!-- Chat Window -->
+        <div id="chat-window" class="flex-grow p-4 overflow-y-auto space-y-4">
+            <!-- Initial Bot Message -->
+            <div class="flex justify-start">
+                <div class="bg-gray-200 text-gray-800 p-3 rounded-xl rounded-tl-none max-w-xs sm:max-w-md shadow">
+                    <p class="font-semibold text-purple-700">Aakriti Bot</p>
+                    <p>Hello! I'm here to answer your questions about the Aakriti 2025 events.</p>
+                    <p class="mt-1">Ask me about: <span class="font-medium text-sm text-purple-600">Cultural, Technical, Non-Technical, or Sports events.</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 border-t border-gray-200 bg-gray-50 flex items-center gap-3">
+            <input type="text" id="user-input" placeholder="Ask about an event..."
+                   class="flex-grow p-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition duration-150 shadow-inner">
+            <button id="send-button" onclick="sendMessage()"
+                    class="bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full shadow-lg transition duration-150 transform hover:scale-105 disabled:bg-purple-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script type="module">
+        // API Configuration (Leave API key as an empty string)
+        const apiKey = "AIzaSyDN2YtWumSherxm61BZ1guXXg6hRh_4hO8"; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // Event Data and Strict Constraints for the LLM
+        const eventData = [
+            // CULTURAL (5 Events)
+            { name: "Rhythmic Rhapsody", details: "A high-energy group dance competition. Min 5, Max 15 members. Fusion styles are highly encouraged. Registration Fee: ₹400 per team. Timing: Day 2, 10:00 AM. Prize Pool: ₹5000. This is a Cultural event." },
+            { name: "Vocal Voyage", details: "Showcase your solo vocal talent. Categories include Classical, Contemporary, and Folk. Registration Fee: ₹150 per participant. Timing: Day 1, 2:00 PM. Prize Pool: ₹1500. This is a Cultural event." },
+            { name: "Spotlight Skits", details: "A dramatic competition for short plays or skits focusing on social themes or comedy. Max 8 participants per team. Registration Fee: ₹300 per team. Timing: Day 2, 3:30 PM. Prize Pool: ₹3000. This is a Cultural event." },
+            { name: "Canvas Clash", details: "A live painting and sketching competition with a theme announced on the spot. Solo participation only. Registration Fee: ₹100 per participant. Timing: Day 1, 11:00 AM. Prize Pool: ₹1000. This is a Cultural event." },
+            { name: "Style Icons", details: "A campus fashion show and ramp walk competition judged on creativity, theme adherence, and stage presence. Teams of 5-10. Registration Fee: ₹500 per team. Timing: Day 3, 5:00 PM. Prize Pool: ₹7000. This is a Cultural event." },
+            
+            // TECHNICAL (5 Events)
+            { name: "Code Crusade", details: "A 3-hour competitive programming event focusing on algorithms and data structures. Teams of 2 are allowed. Registration Fee: ₹250 per team. Timing: Day 1, 9:00 AM. Prize Pool: ₹3000. This is a Technical event." },
+            { name: "Robo Rumble", details: "A robotics challenge featuring line follower and obstacle avoidance. Max team size is 4. Registration Fee: ₹450 per team. Timing: Day 2, 9:30 AM. Prize Pool: ₹6000. This is a Technical event." },
+            { name: "Web Weavers", details: "A 24-hour hackathon focused on front-end and full-stack web development. Prizes for innovation and user experience. Teams of 3. Registration Fee: ₹500 per team. Timing: Day 1, 10:00 AM (starts). Prize Pool: ₹10000. This is a Technical event." },
+            { name: "Circuit Breaker", details: "An intense contest to find and fix bugs and optimize electronic circuits/simulations. Solo participation. Registration Fee: ₹150 per participant. Timing: Day 3, 2:00 PM. Prize Pool: ₹1500. This is a Technical event." },
+            { name: "Data Dynamo", details: "A challenge involving data analysis, visualization, and predictive modeling using real-world datasets. Teams of 2. Registration Fee: ₹350 per team. Timing: Day 2, 1:00 PM. Prize Pool: ₹4000. This is a Technical event." },
+
+            // NON-TECHNICAL (4 Events)
+            { name: "Corporate Clash", details: "A solo business and general knowledge quiz competition on current affairs, economics, and commerce. Registration Fee: ₹100 per participant. Timing: Day 1, 3:30 PM. Prize Pool: ₹1200. This is a Non-Technical event." },
+            { name: "Snap Story", details: "A theme-based photography competition. Submissions must be original and unedited. Solo or pairs. Registration Fee: ₹200 per team. Timing: Day 1 to Day 3 (Submission Deadline). Prize Pool: ₹2500. This is a Non-Technical event." },
+            { name: "Brain Brawl", details: "A general knowledge and rapid-fire buzzer quiz competition for teams of 3. Focus on history, literature, and trivia. Registration Fee: ₹300 per team. Timing: Day 2, 1:30 PM. Prize Pool: ₹3000. This is a Non-Technical event." },
+            { name: "Treasure Hunt", details: "A thrilling campus-wide scavenger hunt involving riddles, puzzles, and physical challenges. Teams of 4. Registration Fee: ₹400 per team. Timing: Day 3, 9:00 AM. Prize Pool: ₹5000. This is a Non-Technical event." },
+
+            // SPORTS (4 Events)
+            { name: "Court Kings", details: "A competitive 3v3 basketball tournament in a league-style format for both men's and women's teams. Registration Fee: ₹500 per team. Timing: Day 3, 11:00 AM. Prize Pool: ₹7000. This is a Sports event." },
+            { name: "Track Titans", details: "Athletics events including the 100m sprint, 400m relay races, and shot put. Solo participation. Registration Fee: ₹100 per participant per event. Timing: Day 1, 4:30 PM. Prize Pool: ₹1000 per event. This is a Sports event." },
+            { name: "Futsal Frenzy", details: "A fast-paced 5v5 indoor football/soccer tournament. Max 7 players per squad. Registration Fee: ₹450 per team. Timing: Day 2, 4:00 PM. Prize Pool: ₹6000. This is a Sports event." },
+            { name: "Smash Zone", details: "A badminton tournament for men's and women's doubles categories. Registration Fee: ₹200 per doubles team. Timing: Day 3, 2:30 PM. Prize Pool: ₹2500. This is a Sports event." }
+        ];
+
+        // Derive event lists by category for clear instruction to the model
+        const culturalEvents = eventData.filter(e => e.details.includes("Cultural event.")).map(e => e.name);
+        const technicalEvents = eventData.filter(e => e.details.includes("Technical event.")).map(e => e.name);
+        const nonTechnicalEvents = eventData.filter(e => e.details.includes("Non-Technical event.")).map(e => e.name);
+        const sportsEvents = eventData.filter(e => e.details.includes("Sports event.")).map(e => e.name);
+
+        const culturalList = culturalEvents.join(', ');
+        const technicalList = technicalEvents.join(', ');
+        const nonTechnicalList = nonTechnicalEvents.join(', ');
+        const sportsList = sportsEvents.join(', ');
+        
+        const eventNames = eventData.map(e => e.name).join(', ');
+        const registrationUrl = "https://aakriti.canaraengineering.in/";
+
+        const systemInstruction = {
+            parts: [{ text: `You are the specialized Event Information Chatbot for Aakriti 2025 at Canara Engineering College.
+Your sole purpose is to provide concise, correct information about the following specific events, including their details, registration fees, timings, and prize money.
+
+Available Events and their full details:
+${eventData.map(e => `${e.name}: ${e.details}`).join('\n')}
+
+RULES for Response Generation (Two-Stage Inquiry):
+1. If the user asks for a category (Cultural, Technical, Non-Technical, or Sports), DO NOT provide full details. You MUST respond with ONLY a list of the event names in that category and then instruct the user to ask about a specific event name for the full description. Use this exact format for the list:
+    - If user asks about 'Cultural', list: The Cultural events are: ${culturalList}. Which one would you like details for?
+    - If user asks about 'Technical', list: The Technical events are: ${technicalList}. Which one would you like details for?
+    - If user asks about 'Non-Technical', list: The Non-Technical events are: ${nonTechnicalList}. Which one would you like details for?
+    - If user asks about 'Sports', list: The Sports events are: ${sportsList}. Which one would you like details for?
+
+2. If the user asks a question that is clearly and directly related to a SPECIFIC event name (e.g., "Code Crusade" or "details on Style Icons"), respond with the relevant full details (including fees, timing, and prize pool).
+3. For any response providing full event details (Rule 2), you MUST conclude with the registration link on a separate line: Registration Link: ${registrationUrl}
+4. If the user asks ANY question that is NOT about a specific event name or one of the four categories, you MUST respond ONLY with the following exact, brief message:
+   "I am the Aakriti bot and can only help you with questions about our specific events (Cultural, Technical, Non-Technical, Sports). Please ask again."
+5. Do not apologize, explain your function, or provide any information outside of these specified response types.` }]
+        };
+
+
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+
+        // Helper function to display messages
+        const displayMessage = (text, sender) => {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `p-3 rounded-xl max-w-xs sm:max-w-md shadow ${
+                sender === 'user'
+                    ? 'bg-purple-600 text-white rounded-br-none'
+                    : 'bg-gray-200 text-gray-800 rounded-tl-none'
+            }`;
+
+            if (sender !== 'user') {
+                const botName = document.createElement('p');
+                botName.className = 'font-semibold text-purple-700';
+                botName.textContent = 'Aakriti Bot';
+                messageBubble.appendChild(botName);
+            }
+
+            // Regex to find the plain text "Registration Link: URL" pattern
+            const registrationLinkText = `Registration Link: ${registrationUrl}`;
+            const linkPattern = new RegExp(registrationLinkText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+            
+            // 1. Replace line breaks with HTML breaks
+            let formattedHtml = text.replace(/\n/g, '<br>');
+
+            // 2. If it's the bot, convert the link text into a clickable HTML anchor tag
+            if (sender !== 'user') {
+                formattedHtml = formattedHtml.replace(linkPattern, 
+                    `<br><a href="${registrationUrl}" target="_blank" class="text-purple-700 font-semibold underline hover:text-purple-900 transition duration-150">Registration Link (Click Here)</a>`
+                );
+            }
+            
+            const textContent = document.createElement('p');
+            textContent.innerHTML = formattedHtml; // Use innerHTML to render the anchor tag
+            messageBubble.appendChild(textContent);
+
+            messageContainer.appendChild(messageBubble);
+            chatWindow.appendChild(messageContainer);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        };
+
+        // Function to handle API call with exponential backoff
+        const fetchWithBackoff = async (payload, maxRetries = 5, delay = 1000) => {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 429 || response.status >= 500) {
+                        // Retry on rate limit or server error
+                        console.warn(`API call failed with status ${response.status}. Retrying in ${delay}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Exponential backoff
+                    } else {
+                        // Non-retryable error
+                        const errorBody = await response.json();
+                        throw new Error(`API Error: ${response.status} - ${JSON.stringify(errorBody)}`);
+                    }
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw new Error(`API call failed after ${maxRetries} attempts: ${error.message}`);
+                    }
+                    // Continue to next iteration for retry
+                }
+            }
+        };
+
+        // Main send message function
+        window.sendMessage = async () => {
+            const userText = userInput.value.trim();
+            if (!userText) return;
+
+            displayMessage(userText, 'user');
+            userInput.value = '';
+            sendButton.disabled = true;
+            userInput.disabled = true;
+
+            const loadingMessage = displayMessage('...', 'bot');
+            const loadingBubble = chatWindow.lastChild.querySelector('div:last-child');
+            loadingBubble.innerHTML = `
+                <p class="font-semibold text-purple-700">Aakriti Bot</p>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm">Typing</span>
+                    <svg class="animate-spin h-4 w-4 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+            `;
+
+            const payload = {
+                contents: [{ parts: [{ text: userText }] }],
+                systemInstruction: systemInstruction,
+            };
+
+            try {
+                const result = await fetchWithBackoff(payload);
+
+                const botResponse = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I encountered an internal error.";
+
+                // Replace loading message with the actual response
+                loadingBubble.innerHTML = '';
+                displayMessage(botResponse, 'bot');
+
+            } catch (error) {
+                console.error("API Call Error:", error);
+                loadingBubble.innerHTML = `<p class="font-semibold text-red-600">Aakriti Bot</p><p>Error: Could not connect to the information service. Please try again later.</p>`;
+            } finally {
+                sendButton.disabled = false;
+                userInput.disabled = false;
+                userInput.focus();
+                // Remove the old loading message container
+                if (chatWindow.lastChild === loadingMessage) {
+                    chatWindow.removeChild(loadingMessage);
+                }
+            }
+        };
+
+        // Allow sending message with Enter key
+        userInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Initial focus
+        window.onload = () => {
+             userInput.focus();
+        };
+
+    </script>
+</body>
+</html>
